@@ -1,0 +1,54 @@
+$DellInstallationLocationX64 = $Env:ProgramW6432 + "\Dell\CommandUpdate"
+$DellInstallationLocationX32 = $Env:ProgramFiles + "\Dell\CommandUpdate"
+$Report = "c:\Temp\DCUApplicableUpdates.xml"
+
+if((Get-CimInstance -ClassName Win32_ComputerSystem).Manufacturer -like '*Dell*') {
+
+         if(Test-Path $Report) {
+
+                Remove-Item $Report
+        }
+
+        if(Test-Path $DellInstallationLocationX64) {
+                
+                Start-Process "$($DellInstallationLocationX64)\DCU-CLI.exe" -ArgumentList "/scan -silent  -report=C:\Temp"  -Wait
+                $XMLReport = [xml](get-content $Report)
+
+                $BIOSUpdates        = ($XMLReport.updates.update | Where-Object {$_.type -eq "BIOS"}).name.Count
+                $ApplicationUpdates = ($XMLReport.updates.update | Where-Object {$_.type -eq "Application"}).name.Count
+                $DriverUpdates      = ($XMLReport.updates.update | Where-Object {$_.type -eq "Driver"}).name.Count
+                $FirmwareUpdates    = ($XMLReport.updates.update | Where-Object {$_.type -eq "Firmware"}).name.Count
+                $OtherUpdates       = ($XMLReport.updates.update | Where-Object {$_.type -eq "Other"}).name.Count
+                $PatchUpdates       = ($XMLReport.updates.update | Where-Object {$_.type -eq "Patch"}).name.Count
+                $UtilityUpdates     = ($XMLReport.updates.update | Where-Object {$_.type -eq "Utility"}).name.Count
+                $UrgentUpdates      = ($XMLReport.updates.update | Where-Object {$_.Urgency -eq "Urgent"}).name.Count
+        
+        
+                Write-Host "$BIOSUpdates|$FirmwareUpdates|$UrgentUpdates|$DriverUpdates|$PatchUpdates|$ApplicationUpdates|$UtilityUpdates|$OtherUpdates"
+        
+        }
+
+        if(Test-Path $DellInstallationLocationX32) {
+                
+                Start-Process "$($DellInstallationLocationX32)\DCU-CLI.exe" -ArgumentList "/scan -silent  -report=C:\Temp"  -Wait
+                $XMLReport = [xml](get-content $Report)
+
+                $BIOSUpdates        = ($XMLReport.updates.update | Where-Object {$_.type -eq "BIOS"}).name.Count
+                $ApplicationUpdates = ($XMLReport.updates.update | Where-Object {$_.type -eq "Application"}).name.Count
+                $DriverUpdates      = ($XMLReport.updates.update | Where-Object {$_.type -eq "Driver"}).name.Count
+                $FirmwareUpdates    = ($XMLReport.updates.update | Where-Object {$_.type -eq "Firmware"}).name.Count
+                $OtherUpdates       = ($XMLReport.updates.update | Where-Object {$_.type -eq "Other"}).name.Count
+                $PatchUpdates       = ($XMLReport.updates.update | Where-Object {$_.type -eq "Patch"}).name.Count
+                $UtilityUpdates     = ($XMLReport.updates.update | Where-Object {$_.type -eq "Utility"}).name.Count
+                $UrgentUpdates      = ($XMLReport.updates.update | Where-Object {$_.Urgency -eq "Urgent"}).name.Count
+        
+        
+                Write-Host "$BIOSUpdates|$FirmwareUpdates|$UrgentUpdates|$DriverUpdates|$PatchUpdates|$ApplicationUpdates|$UtilityUpdates|$OtherUpdates"
+        
+        }
+
+        If(Test-Path $Report) {
+
+                Remove-Item $Report
+        }
+}
